@@ -1,21 +1,24 @@
 package com.chapter9work.crudapi.controller;
 
 import com.chapter9work.crudapi.entity.PrefecturalGovernment;
+import com.chapter9work.crudapi.exception.ResourceNotFoundException;
+import com.chapter9work.crudapi.form.PrefecturalGovernmentCreateForm;
+import com.chapter9work.crudapi.form.PrefecturalGovernmentUpdateForm;
 import com.chapter9work.crudapi.service.PrefecturalGovernmentService;
-import com.chapter9work.crudapi.service.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Validated
 @RestController
 public class PrefecturalGovernmentController {
 
@@ -40,12 +43,12 @@ public class PrefecturalGovernmentController {
         return response;
     }
 
-    //localhost:8080/prefecturalGovernments?postCode=060-8588 にアクセスするとDBに登録されている都道府県庁情報から
+    //localhost:8080/prefecturalGovernments?postalCode=060-8588 にアクセスするとDBに登録されている都道府県庁情報から
     //郵便番号が060-8588と一致する都道府県情報を取得する
     @GetMapping("/prefecturalGovernments")
-    public String getprefecturalGovernmentsByPostCode(@RequestParam("postCode") String postCode) {
+    public String getprefecturalGovernmentsBypostalCode(@RequestParam("postalCode") String postalCode) {
         // prefecturalGovernmentServiceを使用して、指定された郵便番号にある都道府県庁を取得
-        PrefecturalGovernment prefecturalGovernment = prefecturalGovernmentService.findByPostCode(postCode);
+        PrefecturalGovernment prefecturalGovernment = prefecturalGovernmentService.findBypostalCode(postalCode);
         return prefecturalGovernment.getName();
     }
 
@@ -60,5 +63,35 @@ public class PrefecturalGovernmentController {
                 "message", e.getMessage(),
                 "path", request.getRequestURI());
         return new ResponseEntity(body, HttpStatus.NOT_FOUND);
+    }
+
+
+    @GetMapping("/prefecturalGovernments/{id}")
+    public ResponseEntity<PrefecturalGovernmentResponse> findById(@PathVariable("id") int id) {
+        PrefecturalGovernment prefecturalGovernment = prefecturalGovernmentService.findById(id);
+        PrefecturalGovernmentResponse response = new PrefecturalGovernmentResponse(prefecturalGovernment);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/prefecturalGovernments")
+    public ResponseEntity<PrefecturalGovernment> createprefecturalGovernment(@RequestBody PrefecturalGovernmentCreateForm prefecturalGovernmentCreateForm, UriComponentsBuilder uriBuilder) {
+        PrefecturalGovernment prefecturalGovernment = prefecturalGovernmentService.createPrefecturalGovernment(prefecturalGovernmentCreateForm.getName(), prefecturalGovernmentCreateForm.getpostalCode());
+        URI url = uriBuilder
+                .path("/prefecturalGovernments/" + prefecturalGovernment.getId())
+                .build()
+                .toUri();
+        return ResponseEntity.created(url).body(prefecturalGovernment);
+    }
+
+    @PatchMapping("prefecturalGovernments/{id}")
+    public ResponseEntity<Map<String, String>> updatePrefecturalGovernment(@PathVariable int id, @RequestBody PrefecturalGovernmentUpdateForm prefecturalGovernmentUpdateForm) throws Exception {
+        prefecturalGovernmentService.updatePrefecturalGovernment(id, prefecturalGovernmentUpdateForm.getName(), prefecturalGovernmentUpdateForm.getpostalCode());
+        return ResponseEntity.ok(Map.of("message", "successfully updated"));
+    }
+
+    @DeleteMapping("prefecturalGovernments/{id}")
+    public ResponseEntity<Map<String, String>> deletePrefecturalGovernment(@PathVariable int id) {
+        prefecturalGovernmentService.deletePrefecturalGovernment(id);
+        return ResponseEntity.ok(Map.of("message", "successfully deleted"));
     }
 }

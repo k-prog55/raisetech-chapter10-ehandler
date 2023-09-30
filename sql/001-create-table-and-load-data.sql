@@ -5,14 +5,14 @@ DROP TABLE IF EXISTS prefecturalGovernments;
 CREATE TABLE prefecturalGovernments (
   id int unsigned AUTO_INCREMENT,
   name VARCHAR(20) NOT NULL,
-  postCode VARCHAR(20) NOT NULL,
+  postalCode VARCHAR(20) NOT NULL,
   PRIMARY KEY(id)
 );
 
 -- prefecturalGovernmentsテーブルにデータを挿入
 -- 文字列は 'シングルクォーテーション' で囲む
-INSERT INTO prefecturalGovernments (name, postCode) VALUES ('北海道庁', '060-8588');
-INSERT INTO prefecturalGovernments (name, postCode) VALUES ('青森県庁', '030-8570');
-INSERT INTO prefecturalGovernments (name, postCode) VALUES ('岩手県庁', '020-8570');
-INSERT INTO prefecturalGovernments (name, postCode) VALUES ('宮城県庁', '980-8570');
-INSERT INTO prefecturalGovernments (name, postCode) VALUES ('秋田県庁', '010-8570');
+INSERT INTO prefecturalGovernments (name, postalCode) VALUES ('北海道庁', '060-8588');
+INSERT INTO prefecturalGovernments (name, postalCode) VALUES ('青森県庁', '030-8570');
+INSERT INTO prefecturalGovernments (name, postalCode) VALUES ('岩手県庁', '020-8570');
+INSERT INTO prefecturalGovernments (name, postalCode) VALUES ('宮城県庁', '980-8570');
+INSERT INTO prefecturalGovernments (name, postalCode) VALUES ('秋田県庁', '010-8570');
