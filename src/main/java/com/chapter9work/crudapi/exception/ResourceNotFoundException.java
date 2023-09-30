@@ -1,15 +1,18 @@
-package com.chapter9work.crudapi.service;
+package com.chapter9work.crudapi.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException() {
         super();
     }
+
     public ResourceNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
+
     public ResourceNotFoundException(String message) {
         super(message);
     }
+
     public ResourceNotFoundException(Throwable cause) {
         super(cause);
     }
